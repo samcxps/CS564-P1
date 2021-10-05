@@ -114,6 +114,21 @@ def get_bid(item):
 
     return tmp_bids
 
+def get_category(item):
+    tmp_cats = []
+
+    categories = item["Category"]
+
+    for cat in categories:
+        item_id = item["ItemID"] 
+        category = cat
+
+        tmp_str = item_id + "|" + category
+
+        tmp_cats.append(tmp_str.encode('utf-8'))
+
+    return tmp_cats
+
 
 """
 Parses a single json file. Currently, there's a loop that iterates over each
@@ -134,6 +149,7 @@ def parseJson(json_file):
             item_dat.append(get_item(item))
             user_dat.append(get_user(item))
             bid_dat.append(get_bid(item))
+            category_dat.append(get_category(item))
 
 
     with open("dat_files/user.dat", 'a') as f:
@@ -151,6 +167,13 @@ def parseJson(json_file):
             for b in bid:
                 f.write(b)
                 f.write("\n")
+
+    with open("dat_files/category.dat", 'a') as f:
+        for cat in category_dat:
+            for c in cat:
+                f.write(c)
+                f.write("\n")
+                
 
 
 """
