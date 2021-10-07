@@ -152,27 +152,29 @@ def parseJson(json_file):
             category_dat.append(get_category(item))
 
 
-    with open("dat_files/user.dat", 'a') as f:
+    strng = '\n'
+    str_byte = str.encode(strng)
+    with open("dat_files/user.dat", 'ab') as f:
         for user in user_dat:
             f.write(user)
-            f.write("\n")
+            f.write(str_byte)
 
-    with open("dat_files/item.dat", 'a') as f:
+    with open("dat_files/item.dat", 'ab') as f:
         for item in item_dat:
-            f.write(item)
-            f.write("\n")
+            f.write(item.encode())
+            f.write(str_byte)
 
-    with open("dat_files/bid.dat", 'a') as f:
+    with open("dat_files/bid.dat", 'ab') as f:
         for bid in bid_dat:
             for b in bid:
                 f.write(b)
-                f.write("\n")
+                f.write(str_byte)
 
-    with open("dat_files/category.dat", 'a') as f:
+    with open("dat_files/category.dat", 'ab') as f:
         for cat in category_dat:
             for c in cat:
                 f.write(c)
-                f.write("\n")
+                f.write(str_byte)
                 
 
 
