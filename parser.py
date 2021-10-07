@@ -1,11 +1,14 @@
+
 """
 FILE: skeleton_parser.py
 ------------------
 Author: Firas Abuzaid (fabuzaid@stanford.edu)
 Author: Perth Charernwattanagul (puch@stanford.edu)
 Modified: 04/21/2014
+
 Skeleton parser for CS564 programming project 1. Has useful imports and
 functions for parsing, including:
+
 1) Directory handling -- the parser takes a list of eBay json files
 and opens each file inside of a loop. You just need to fill in the rest.
 2) Dollar value conversions -- the json files store dollar value amounts in
@@ -14,6 +17,7 @@ like XXXXX.xx.
 3) Date/time conversions -- the json files store dates/ times in the form
 Mon-DD-YY HH:MM:SS -- we wrote a function (transformDttm) that converts to the
 for YYYY-MM-DD HH:MM:SS, which will sort chronologically in SQL.
+
 Your job is to implement the parseJson function, which is invoked on each file by
 the main function. We create the initial Python dictionary object of items for
 you; the rest is up to you!
@@ -27,35 +31,27 @@ from re import sub
 columnSeparator = "|"
 
 # Dictionary of months used for date transformation
-MONTHS = {'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06', \
-          'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'}
+MONTHS = {'Jan':'01','Feb':'02','Mar':'03','Apr':'04','May':'05','Jun':'06',\
+        'Jul':'07','Aug':'08','Sep':'09','Oct':'10','Nov':'11','Dec':'12'}
 
 """
 Returns true if a file ends in .json
 """
-
-
 def isJson(f):
     return len(f) > 5 and f[-5:] == '.json'
-
 
 """
 Converts month to a number, e.g. 'Dec' to '12'
 """
-
-
 def transformMonth(mon):
     if mon in MONTHS:
         return MONTHS[mon]
     else:
         return mon
 
-
 """
 Transforms a timestamp from Mon-DD-YY HH:MM:SS to YYYY-MM-DD HH:MM:SS
 """
-
-
 def transformDttm(dttm):
     dttm = dttm.strip().split(' ')
     dt = dttm[0].split('-')
@@ -63,11 +59,9 @@ def transformDttm(dttm):
     date += transformMonth(dt[0]) + '-' + dt[1]
     return date + ' ' + dttm[1]
 
-
 """
 Transform a dollar value amount from a string like $3,453.23 to XXXXX.xx
 """
-
 
 def transformDollar(money):
     if money == None or len(money) == 0:
@@ -76,7 +70,7 @@ def transformDollar(money):
 
 
 def get_item(item):
-    item_id = item["ItemID"]  # primary key
+    item_id = item["ItemID"]                    # primary key
     name = item["Name"]
     currently = transformDollar(item["Currently"])
     buy_price = transformDollar(item["Buy_Price"]) if item.get("Buy_Price") else "NULL"
@@ -84,7 +78,7 @@ def get_item(item):
     number_of_bids = item["Number_of_Bids"]
     started = transformDttm(item["Started"])
     ends = transformDttm(item["Ends"])
-    seller = item["Seller"]["UserID"]  # foreign key
+    seller = item["Seller"]["UserID"]                     # foreign key
     description = item["Description"] if item.get("Description") else "NULL"
 
     tmp_str = item_id + "|" + name + "|" + currently + "|" + buy_price + "|" + first_bid + "|" + number_of_bids + "|" + started + "|" + ends + "|" + seller + "|" + description
@@ -109,7 +103,7 @@ def get_bid(item):
 
     if item_bids:
         for bid in item_bids:
-            item_id = item["ItemID"]
+            item_id = item["ItemID"] 
             user_id = bid["Bid"]["Bidder"]["UserID"]
             time = transformDttm(bid["Bid"]["Time"])
             amount = transformDollar(bid["Bid"]["Amount"])
@@ -120,30 +114,20 @@ def get_bid(item):
 
     return tmp_bids
 
-
 def get_category(item):
-    tmp_cat = []
+    tmp_cats = []
 
     categories = item["Category"]
-    item_id = item["ItemID"]
-
-    tmp_str = item_id + "|"
-
-    num_cat = 0
 
     for cat in categories:
-        num_cat = num_cat + 1
-
+        item_id = item["ItemID"] 
         category = cat
 
-        tmp_str = tmp_str + category + ','
+        tmp_str = item_id + "|" + category
 
-    tmp_str = tmp_str[:-1]
-    tmp_str = tmp_str + "|" + str(num_cat)
+        tmp_cats.append(tmp_str.encode('utf-8'))
 
-    tmp_cat.append(tmp_str.encode('utf-8'))
-
-    return tmp_cat
+    return tmp_cats
 
 
 """
@@ -151,8 +135,6 @@ Parses a single json file. Currently, there's a loop that iterates over each
 item in the data set. Your job is to extend this functionality to create all
 of the necessary SQL tables for your database.
 """
-
-
 def parseJson(json_file):
     item_dat = []
     user_dat = []
@@ -160,7 +142,7 @@ def parseJson(json_file):
     category_dat = []
 
     with open(json_file, 'r') as f:
-        items = loads(f.read())['Items']  # creates a Python dictionary of Items for the supplied json file
+        items = loads(f.read())['Items'] # creates a Python dictionary of Items for the supplied json file
 
         i = 0
         for item in items:
@@ -169,37 +151,35 @@ def parseJson(json_file):
             bid_dat.append(get_bid(item))
             category_dat.append(get_category(item))
 
-    strng = '\n'
-    str_byte = str.encode(strng)
-    with open("dat_files/user.dat", 'ab') as f:
+
+    with open("dat_files/user.dat", 'a') as f:
         for user in user_dat:
             f.write(user)
-            f.write(str_byte)
+            f.write("\n")
 
-    with open("dat_files/item.dat", 'ab') as f:
+    with open("dat_files/item.dat", 'a') as f:
         for item in item_dat:
-            f.write(item.encode())
-            f.write(str_byte)
+            f.write(item)
+            f.write("\n")
 
-    with open("dat_files/bid.dat", 'ab') as f:
+    with open("dat_files/bid.dat", 'a') as f:
         for bid in bid_dat:
             for b in bid:
                 f.write(b)
-                f.write(str_byte)
+                f.write("\n")
 
-    with open("dat_files/category.dat", 'ab') as f:
+    with open("dat_files/category.dat", 'a') as f:
         for cat in category_dat:
             for c in cat:
                 f.write(c)
-                f.write(str_byte)
+                f.write("\n")
+                
 
 
 """
 Loops through each json files provided on the command line and passes each file
 to the parser
 """
-
-
 def main(argv):
     if len(argv) < 2:
         print >> sys.stderr, 'Usage: python skeleton_json_parser.py <path to json files>'
@@ -209,7 +189,6 @@ def main(argv):
         if isJson(f):
             parseJson(f)
             print("Success parsing " + f)
-
 
 if __name__ == '__main__':
     main(sys.argv)
