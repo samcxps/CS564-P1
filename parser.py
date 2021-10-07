@@ -68,6 +68,10 @@ def transformDollar(money):
         return money
     return sub(r'[^\d.]', '', money)
 
+def fixQuotation(str_input):
+    str_input = str_input.replace('"','""')
+    str_input = '"' + str_input + '"'
+    return str_input
 
 def get_item(item):
     item_id = item["ItemID"]                    # primary key
@@ -87,10 +91,10 @@ def get_item(item):
 
 
 def get_user(item):
-    user_id = item["Seller"]["UserID"]
+    user_id = fixQuotation(item["Seller"]["UserID"])
     rating = item["Seller"]["Rating"]
-    country = item["Country"]
-    location = item["Location"]
+    country = fixQuotation(item["Country"]
+    location = fixQuotation(item["Location"])
 
     tmp_str = user_id + "|" + rating + "|" + country + "|" + location
 
