@@ -77,13 +77,13 @@ def get_item(item):
     item_id = item["ItemID"]                    # primary key
     name = fixQuotation(item["Name"])
     currently = transformDollar(item["Currently"])
-    buy_price = transformDollar(item["Buy_Price"]) if item.get("Buy_Price") else fixQuotation("NULL")
+    buy_price = transformDollar(item["Buy_Price"]) if item.get("Buy_Price") else "NULL"
     first_bid = transformDollar(item["First_Bid"])
     number_of_bids = item["Number_of_Bids"]
     started = transformDttm(item["Started"])
     ends = transformDttm(item["Ends"])
     seller = item["Seller"]["UserID"]                     # foreign key
-    description = fixQuotation(item["Description"]) if item.get("Description") else fixQuotation("NULL")
+    description = fixQuotation(item["Description"]) if item.get("Description") else "NULL"
 
     tmp_str = item_id + "|" + name + "|" + currently + "|" + buy_price + "|" + first_bid + "|" + number_of_bids + "|" + started + "|" + ends + "|" + seller + "|" + description
 

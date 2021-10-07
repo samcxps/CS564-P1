@@ -8,7 +8,7 @@ create table Bid
             UserID CHAR(255), 
             Time char(255), 
             Amount float,
-            PRIMARY KEY(ItemID, UserID)
+            PRIMARY KEY(ItemID, UserID, Amount)
             FOREIGN KEY (UserID) REFERENCES User (UserID),
             FOREIGN KEY (ItemID) REFERENCES Item (ItemID));
 create table Category 
