@@ -115,19 +115,28 @@ def get_bid(item):
     return tmp_bids
 
 def get_category(item):
-    tmp_cats = []
+    tmp_cat = []
 
     categories = item["Category"]
+    item_id = item["ItemID"]
+
+    tmp_str = item_id + "|"
+
+    num_cat = 0
 
     for cat in categories:
-        item_id = item["ItemID"] 
+        num_cat = num_cat + 1
+
         category = cat
 
-        tmp_str = item_id + "|" + category
+        tmp_str = tmp_str + category + ','
 
-        tmp_cats.append(tmp_str.encode('utf-8'))
+    tmp_str = tmp_str[:-1]
+    tmp_str = tmp_str + "|" + str(num_cat)
 
-    return tmp_cats
+    tmp_cat.append(tmp_str.encode('utf-8'))
+
+    return tmp_cat
 
 
 """
