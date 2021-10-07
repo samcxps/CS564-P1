@@ -93,7 +93,7 @@ def get_item(item):
 def get_user(item):
     user_id = fixQuotation(item["Seller"]["UserID"])
     rating = item["Seller"]["Rating"]
-    country = fixQuotation(item["Country"]
+    country = fixQuotation(item["Country"])
     location = fixQuotation(item["Location"])
 
     tmp_str = user_id + "|" + rating + "|" + country + "|" + location
