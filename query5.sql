@@ -1,0 +1,3 @@
+SELECT COUNT(User.UserID)
+FROM User
+WHERE User.Rating > 1000
