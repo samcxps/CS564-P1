@@ -90,14 +90,19 @@ def get_item(item):
     return tmp_str
 
 
+Users = []
 def get_user(item):
     user_id = item["Seller"]["UserID"]
     rating = item["Seller"]["Rating"]
     country = item["Country"]
-    location = item["Location"]
+    location = fixQuotation(item["Location"])
 
     tmp_str = user_id + "|" + rating + "|" + country + "|" + location
 
+    if user_id in Users:
+        return None
+
+    Users.append(user_id)
     return tmp_str.encode('utf-8')
 
 
@@ -160,9 +165,13 @@ def parseJson(json_file):
         i = 0
         for item in items:
             item_dat.append(get_item(item))
-            user_dat.append(get_user(item))
             bid_dat.append(get_bid(item))
             category_dat.append(get_category(item))
+
+            u = get_user(item)
+            if u:
+                user_dat.append(u)
+
 
 
     with open("dat_files/user.dat", 'a') as f:
