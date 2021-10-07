@@ -68,18 +68,22 @@ def transformDollar(money):
         return money
     return sub(r'[^\d.]', '', money)
 
+def fixQuotation(str_input):
+    str_input = str_input.replace('"','""')
+    str_input = '"' + str_input + '"'
+    return str_input
 
 def get_item(item):
     item_id = item["ItemID"]                    # primary key
-    name = item["Name"]
+    name = fixQuotation(item["Name"])
     currently = transformDollar(item["Currently"])
-    buy_price = transformDollar(item["Buy_Price"]) if item.get("Buy_Price") else "NULL"
+    buy_price = transformDollar(item["Buy_Price"]) if item.get("Buy_Price") else fixQuotation("NULL")
     first_bid = transformDollar(item["First_Bid"])
     number_of_bids = item["Number_of_Bids"]
     started = transformDttm(item["Started"])
     ends = transformDttm(item["Ends"])
     seller = item["Seller"]["UserID"]                     # foreign key
-    description = item["Description"] if item.get("Description") else "NULL"
+    description = fixQuotation(item["Description"]) if item.get("Description") else fixQuotation("NULL")
 
     tmp_str = item_id + "|" + name + "|" + currently + "|" + buy_price + "|" + first_bid + "|" + number_of_bids + "|" + started + "|" + ends + "|" + seller + "|" + description
 

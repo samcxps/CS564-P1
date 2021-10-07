@@ -1,0 +1,7 @@
+.separator |
+.import dat_files/category.dat Category
+.import dat_files/bid.dat Bid
+.import dat_files/user.dat User
+.import dat_files/item.dat Item
+update Item set Buy_Price = null where Buy_Price = 'NULL'
+update Item set Description = null where Description = 'NULL'
