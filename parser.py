@@ -90,20 +90,37 @@ def get_item(item):
     return tmp_str
 
 
+
 Users = []
-def get_user(item):
+def get_users(item):
+    ret_users = []
+
+    #### Seller user stuff
     user_id = item["Seller"]["UserID"]
     rating = item["Seller"]["Rating"]
     country = item["Country"]
     location = fixQuotation(item["Location"])
 
-    tmp_str = user_id + "|" + rating + "|" + country + "|" + location
+    if user_id not in Users:
+        ret_users.append(user_id + "|" + rating + "|" + country + "|" + location.encode('utf-8'))
+        Users.append(user_id)
+    ####
 
-    if user_id in Users:
-        return None
+    #### Bid user stuff
+    item_bids = item.get('Bids')
+    if item_bids:
+        for bid in item_bids:
+            user_id = bid["Bid"]["Bidder"]["UserID"]
+            rating = bid["Bid"]["Bidder"]["Rating"]
+            country = bid["Bid"]["Bidder"]["Country"] if bid.get("Bid").get("Bidder").get("Country") else "NULL"
+            location = fixQuotation(bid["Bid"]["Bidder"]["Location"]) if bid.get("Bid").get("Bidder").get("Location") else "NULL"
 
-    Users.append(user_id)
-    return tmp_str.encode('utf-8')
+            if user_id not in Users:
+                ret_users.append(user_id + "|" + rating + "|" + country + "|" + location.encode('utf-8'))
+                Users.append(user_id)
+    ####
+
+    return ret_users
 
 
 def get_bid(item):
@@ -123,25 +140,19 @@ def get_bid(item):
 
     return tmp_bids
 
+
 def get_category(item):
     tmp_cat = []
 
-    categories = item["Category"]
+    item_categories = set(item["Category"])
     item_id = item["ItemID"]
 
     tmp_str = item_id + "|"
-
-    num_cat = 0
-
-    for cat in categories:
-        num_cat = num_cat + 1
-
-        category = cat
-
+    for category in item_categories:
         tmp_str = tmp_str + category + ','
 
     tmp_str = tmp_str[:-1]
-    tmp_str = tmp_str + "|" + str(num_cat)
+    tmp_str = tmp_str + "|" + str(len(item_categories))
 
     tmp_cat.append(tmp_str.encode('utf-8'))
 
@@ -168,10 +179,9 @@ def parseJson(json_file):
             bid_dat.append(get_bid(item))
             category_dat.append(get_category(item))
 
-            u = get_user(item)
-            if u:
-                user_dat.append(u)
-
+            items_users = get_users(item)
+            for user in items_users:
+                user_dat.append(user)
 
 
     with open("dat_files/user.dat", 'a') as f:
