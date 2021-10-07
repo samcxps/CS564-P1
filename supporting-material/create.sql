@@ -14,6 +14,7 @@ create table Bid
 create table Category 
             (ItemID int, 
             Category_val char(255),
+            Num_Cat int,
             PRIMARY KEY (ItemID)
             FOREIGN KEY (ItemID) REFERENCES Item (ItemID));
 create table Item 
