@@ -1,3 +1,3 @@
-SELECT COUNT(Item.SellerID)
-FROM Item, Bid
-WHERE Bid.UserID == Item.SellerID
+SELECT COUNT(Seller.UserID)
+FROM Seller, Bidder
+WHERE Bidder.UserID == Seller.UserID

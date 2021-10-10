@@ -3,6 +3,8 @@
 .import dat_files/bid.dat Bid
 .import dat_files/user.dat User
 .import dat_files/item.dat Item
+.import dat_files/seller.dat Seller
+.import dat_files/bidder.dat Bidder
 update Item set Buy_Price = null where Buy_Price = "NULL";
 update Item set Description = null where Description = "NULL";
 update User set Location = null where Location = "NULL";

@@ -2,6 +2,8 @@ drop table if exists Bid;
 drop table if exists Category;
 drop table if exists Item;
 drop table if exists User;
+drop table if exists Seller;
+drop table if exists Bidder;
 
 create table Bid
             (ItemID int,
@@ -30,3 +32,7 @@ create table Item
             Description char(255),
             FOREIGN KEY (SellerID) REFERENCES User (UserID));
 create table User (UserID char(255) PRIMARY KEY, Rating int, Country char(255), Location char(255));
+create table Seller (UserID char(255) PRIMARY KEY, FOREIGN KEY (UserID) REFERENCES User (UserID));
+create table Bidder (UserID char(255) PRIMARY KEY, FOREIGN KEY (UserID) REFERENCES User (UserID));
+
+

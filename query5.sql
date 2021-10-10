@@ -1,3 +1,3 @@
 SELECT COUNT(User.UserID)
-FROM User
-WHERE User.Rating > 1000
+FROM Seller, User
+WHERE User.Rating > 1000 AND Seller.UserID == User.UserID

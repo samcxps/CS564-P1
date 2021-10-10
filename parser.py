@@ -88,24 +88,23 @@ def get_item(item):
     tmp_str = item_id + "|" + name + "|" + currently + "|" + buy_price + "|" + first_bid + "|" + number_of_bids + "|" + started + "|" + ends + "|" + seller + "|" + description
 
     return tmp_str
-
-
-
-Users = []
-def get_users(item):
-    ret_users = []
-
+Sellers = set()
+Bidders = set()
+def get_user(item):
+    ret_users = set()
+    ret_sellers = set()
+    ret_bidders = set()
     #### Seller user stuff
     user_id = item["Seller"]["UserID"]
     rating = item["Seller"]["Rating"]
-    country = item["Country"]
-    location = fixQuotation(item["Location"])
-
-    if user_id not in Users:
-        ret_users.append(user_id + "|" + rating + "|" + country + "|" + location.encode('utf-8'))
-        Users.append(user_id)
+    country = item["Country"] if item["Country"] else "NULL"
+    location = fixQuotation(item["Location"]) if item["Location"] else "NULL"
+    if user_id not in Sellers and user_id not in Bidders:
+        ret_users.add(user_id + "|" + rating + "|" + country + "|" + location)
+    if user_id not in Sellers:
+        ret_sellers.add(user_id)
+        Sellers.add(user_id)
     ####
-
     #### Bid user stuff
     item_bids = item.get('Bids')
     if item_bids:
@@ -114,13 +113,13 @@ def get_users(item):
             rating = bid["Bid"]["Bidder"]["Rating"]
             country = bid["Bid"]["Bidder"]["Country"] if bid.get("Bid").get("Bidder").get("Country") else "NULL"
             location = fixQuotation(bid["Bid"]["Bidder"]["Location"]) if bid.get("Bid").get("Bidder").get("Location") else "NULL"
+            if user_id not in Sellers and user_id not in Bidders:
+                ret_users.add(user_id + "|" + rating + "|" + country + "|" + location)
+            if user_id not in Bidders:  
+                ret_bidders.add(user_id)
+                Bidders.add(user_id)
 
-            if user_id not in Users:
-                ret_users.append(user_id + "|" + rating + "|" + country + "|" + location.encode('utf-8'))
-                Users.append(user_id)
-    ####
-
-    return ret_users
+    return ret_users, ret_sellers, ret_bidders
 
 
 def get_bid(item):
@@ -166,6 +165,8 @@ of the necessary SQL tables for your database.
 """
 def parseJson(json_file):
     item_dat = []
+    seller_dat = []
+    bidder_dat = []
     user_dat = []
     bid_dat = []
     category_dat = []
@@ -179,32 +180,52 @@ def parseJson(json_file):
             bid_dat.append(get_bid(item))
             category_dat.append(get_category(item))
 
-            items_users = get_users(item)
-            for user in items_users:
+            items_user, sellers, bidders = get_user(item)
+            for user in items_user:
                 user_dat.append(user)
+            items_sellers = sellers
+            for user in items_sellers:
+                seller_dat.append(user)
+            items_bidders = bidders
+            for user in items_bidders:
+                bidder_dat.append(user)
 
 
-    with open("dat_files/user.dat", 'a') as f:
+
+    strng = '\n'
+    str_byte = str.encode(strng)
+
+    with open("dat_files/user.dat", 'ab') as f:
         for user in user_dat:
-            f.write(user)
-            f.write("\n")
+            f.write(user.encode())
+            f.write(str_byte)
+    
+    with open("dat_files/seller.dat", 'ab') as f:
+        for user in seller_dat:
+            f.write(user.encode())
+            f.write(str_byte)
 
-    with open("dat_files/item.dat", 'a') as f:
+    with open("dat_files/bidder.dat", 'ab') as f:
+        for user in bidder_dat:
+            f.write(user.encode())
+            f.write(str_byte)
+
+    with open("dat_files/item.dat", 'ab') as f:
         for item in item_dat:
-            f.write(item)
-            f.write("\n")
+            f.write(item.encode())
+            f.write(str_byte)
 
-    with open("dat_files/bid.dat", 'a') as f:
+    with open("dat_files/bid.dat", 'ab') as f:
         for bid in bid_dat:
             for b in bid:
                 f.write(b)
-                f.write("\n")
+                f.write(str_byte)
 
-    with open("dat_files/category.dat", 'a') as f:
+    with open("dat_files/category.dat", 'ab') as f:
         for cat in category_dat:
             for c in cat:
                 f.write(c)
-                f.write("\n")
+                f.write(str_byte)
                 
 
 
