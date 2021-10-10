@@ -5,6 +5,12 @@
 .import dat_files/item.dat Item
 .import dat_files/seller.dat Seller
 .import dat_files/bidder.dat Bidder
+update Category set Category_1 = null where Category_1 = "NULL";
+update Category set Category_2 = null where Category_2 = "NULL";
+update Category set Category_3 = null where Category_3 = "NULL";
+update Category set Category_4 = null where Category_4 = "NULL";
+update Category set Category_5 = null where Category_5 = "NULL";
+update Category set Category_6 = null where Category_6 = "NULL";
 update Item set Buy_Price = null where Buy_Price = "NULL";
 update Item set Description = null where Description = "NULL";
 update User set Location = null where Location = "NULL";

@@ -139,19 +139,20 @@ def get_bid(item):
 
     return tmp_bids
 
-
 def get_category(item):
     tmp_cat = []
-
     item_categories = set(item["Category"])
-    item_id = item["ItemID"]
+    item_id = item["ItemID"] 
 
     tmp_str = item_id + "|"
     for category in item_categories:
-        tmp_str = tmp_str + category + ','
-
-    tmp_str = tmp_str[:-1]
-    tmp_str = tmp_str + "|" + str(len(item_categories))
+        tmp_str = tmp_str + category + '|'
+    max_cat_size = 6
+    cat_size = len(item_categories)
+    null_cat = max_cat_size - cat_size
+    for i in range(null_cat):
+        tmp_str = tmp_str + 'NULL' + '|'
+    tmp_str = tmp_str + str(len(item_categories))
 
     tmp_cat.append(tmp_str.encode('utf-8'))
 
@@ -189,8 +190,6 @@ def parseJson(json_file):
             items_bidders = bidders
             for user in items_bidders:
                 bidder_dat.append(user)
-
-
 
     strng = '\n'
     str_byte = str.encode(strng)
